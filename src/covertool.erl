@@ -173,17 +173,6 @@ generate_packages(AppName, PrefixLen, Modules) ->
 package_name(AppName, PrefixLen, Module)
     when is_atom(AppName), is_atom(Module) ->
     AppNameStr = atom_to_list(AppName),
-    SourceDirs = case lookup_source(Module) of
-                    false ->
-                        [];
-                    SourceFile ->
-                        case filename:dirname(SourceFile) of
-                            "." ->
-                                [];
-                            DirName ->
-                                string:tokens(DirName, "/")
-                        end
-                end,
     Prefix = case PrefixLen of
                  0 ->
                      "";
@@ -191,7 +180,7 @@ package_name(AppName, PrefixLen, Module)
                      lists:sublist(string:tokens(atom_to_list(Module), "_"),
                                    PrefixLen)
              end,
-    string:join([AppNameStr] ++ SourceDirs ++ Prefix, ".").
+    string:join([AppNameStr] ++ Prefix, ".").
 
 generate_package(PackageName, Modules) ->
     Classes = generate_classes(Modules),
