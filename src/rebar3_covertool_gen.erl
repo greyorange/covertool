@@ -108,10 +108,8 @@ generate_apps( State, Apps, LogFile ) ->
 generate_app(State, App, Result) ->
     OutputFile = filename:join(outdir(State), atom_to_list(App) ++ ".covertool.xml"),
     EbinPath = [filename:join([rebar_dir:base_dir(State), "lib", atom_to_list(App), "ebin"])],
-    CurrProfileDir = rebar_dir:base_dir(State),
-    DefaultProfileDir = rebar_dir:profile_dir(rebar_state:opts(State), [default]),
-    SrcPath = [filename:join([ProfileDir, "lib", atom_to_list(App), "src"])
-               || ProfileDir <- lists:usort([CurrProfileDir, DefaultProfileDir])],
+    SrcPath = [filename:join([rebar_app_info:dir(AppInfo), "src"]) || AppInfo <- rebar_state:project_apps(State),
+                app_to_atom(rebar_app_info:name(AppInfo)) == App ],
     PrefixLen = prefix_len(State),
     Config = #config{ appname = App, output = OutputFile,
                       sources = SrcPath, beams = EbinPath,
